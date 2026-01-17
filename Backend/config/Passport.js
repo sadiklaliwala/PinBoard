@@ -169,7 +169,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: process.env.CALLBACK_URL+'/api/auth/google/callback'
+            callbackURL: process.env.CALLBACK_URL+'/api/auth/google/callback' || "http://localhost:5000/api/auth/google/callback"
         },
         async (accessToken, refreshToken, profile, done) => {
             
@@ -234,7 +234,7 @@ passport.use(
         {
             clientID: process.env.GITHUB_CLIENT_ID,
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
-            callbackURL: process.env.CALLBACK_URL+'/api/auth/github/callback',
+            callbackURL: process.env.CALLBACK_URL+'/api/auth/github/callback' ||"http://localhost:5000/api/auth/github/callback",
             scope: ['user:email'],
         },
         async (accessToken, refreshToken, profile, done) => {
@@ -294,54 +294,54 @@ passport.use(
     )
 );
 
-passport.use(
-    new FacebookStrategy(
-        {
-            clientID: process.env.FACEBOOK_APP_ID,
-            clientSecret: process.env.FACEBOOK_APP_SECRET,
-            callbackURL: `${process.env.CALLBACK_URL}/auth/facebook/callback`,
-            profileFields: ['id', 'displayName', 'emails'],
-        },
-        async (accessToken, refreshToken, profile, done) => {
-            try {
-                const email = profile.emails?.[0]?.value;
+// passport.use(
+//     new FacebookStrategy(
+//         {
+//             clientID: process.env.FACEBOOK_APP_ID,
+//             clientSecret: process.env.FACEBOOK_APP_SECRET,
+//             callbackURL: `${process.env.CALLBACK_URL}/auth/facebook/callback` || "http://localhost:5000/api/auth/google/callback",
+//             profileFields: ['id', 'displayName', 'emails'],
+//         },
+//         async (accessToken, refreshToken, profile, done) => {
+//             try {
+//                 const email = profile.emails?.[0]?.value;
 
-                // 1️⃣ find by Facebook ID
-                let user = await UserModel.findOne({ facebookId: profile.id });
-                if (user) return done(null, user);
+//                 // 1️⃣ find by Facebook ID
+//                 let user = await UserModel.findOne({ facebookId: profile.id });
+//                 if (user) return done(null, user);
 
-                // 2️⃣ find by email (merge/link account)
-                if (email) {
-                    user = await UserModel.findOne({ email });
-                    if (user) {
-                        user.facebookId = profile.id;
-                        if (!user.name) user.name = profile.displayName;
-                        await user.save();
-                        return done(null, user);
-                    }
-                }
+//                 // 2️⃣ find by email (merge/link account)
+//                 if (email) {
+//                     user = await UserModel.findOne({ email });
+//                     if (user) {
+//                         user.facebookId = profile.id;
+//                         if (!user.name) user.name = profile.displayName;
+//                         await user.save();
+//                         return done(null, user);
+//                     }
+//                 }
 
-                // Create new user
-                user = new UserModel({
-                    facebookId: profile.id,
-                    name: profile.displayName || profile.username,
-                    email: email,
-                    username: username,
-                    profileImage: profile.photos?.[0]?.value || '',
-                    authProvider: 'FaceBook',
-                    bio: profile._json.bio || '',
-                    followers: [],
-                    following: [],
-                    followersCount: 0,
-                    followingCount: 0,
-                });
+//                 // Create new user
+//                 user = new UserModel({
+//                     facebookId: profile.id,
+//                     name: profile.displayName || profile.username,
+//                     email: email,
+//                     username: username,
+//                     profileImage: profile.photos?.[0]?.value || '',
+//                     authProvider: 'FaceBook',
+//                     bio: profile._json.bio || '',
+//                     followers: [],
+//                     following: [],
+//                     followersCount: 0,
+//                     followingCount: 0,
+//                 });
 
-                return done(null, newUser);
-            } catch (err) {
-                return done(err, null);
-            }
-        }
-    )
-);
+//                 return done(null, newUser);
+//             } catch (err) {
+//                 return done(err, null);
+//             }
+//         }
+//     )
+// );
 
 export default passport;
