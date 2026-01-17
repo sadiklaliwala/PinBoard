@@ -14,7 +14,7 @@ const AdminContextProvider = ({ children }) => {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   const api = useMemo(() => {
-    const backendUrl = process.env.BACKEND_URI || "http://localhost:5000";
+    const backendUrl = import.meta.env.VITE_BACKEND_URI || "http://localhost:5000";
     return axios.create({
       baseURL: backendUrl,
       withCredentials: true,
