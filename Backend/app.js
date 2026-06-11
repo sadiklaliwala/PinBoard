@@ -21,7 +21,8 @@ connectDB();
 // CORS configuration with multiple allowed origins
 const allowedOrigins = [
   'https://pinterest-clone-phi-vert.vercel.app', // Production frontend
-  'http://localhost:5173', // Local development frontend
+  'http://localhost:5173',
+  "https://pinboards.netlify.app"// Local development frontend
 ];
 
 const corsOptions = {
